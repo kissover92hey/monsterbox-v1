@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ brand }} Slot Monitor</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+        async function loadLogs() {
+            const resp = await fetch('/api/logs');
+            const data = await resp.json();
+            const container = document.getElementById('logs');
+            container.textContent = data.join('\n');
+        }
+        window.addEventListener('DOMContentLoaded', loadLogs);
+    </script>
+</head>
+<body>
+    <h1>{{ brand }} Jackpot Logs</h1>
+    <p><a href="/login">Login</a> | <a href="/admin">Admin</a></p>
+    <pre id="logs">Loading...</pre>
+</body>
+</html>

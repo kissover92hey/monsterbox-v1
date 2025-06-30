@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ brand }} Admin</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const translations = {
+            en: {users:'Users', profit:'Profit', next:'Next', prev:'Prev'},
+            zh: {users:'\u7528\u6237', profit:'\u76c8\u5229', next:'\u4e0b\u4e00\u9875', prev:'\u4e0a\u4e00\u9875'}
+        };
+        let currentLang = localStorage.getItem('lang') || '{{ default_lang }}';
+        function t(key){return (translations[currentLang]||translations.en)[key]||key;}
+        function changeLang(lang){currentLang=lang;localStorage.setItem('lang',lang);applyLang();}
+        function applyLang(){
+            document.getElementById('users-title').textContent=t('users');
+            document.getElementById('prev').textContent=t('prev');
+            document.getElementById('next').textContent=t('next');
+        }
+        function requireToken() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = '/login';
+            }
+            return token;
+        }
+
+        async function apiRequest(path) {
+            const token = requireToken();
+            const resp = await fetch(path, {headers: {Authorization: 'Bearer ' + token}});
+            return resp.json();
+        }
+
+        function renderTable(users) {
+            const tbody = document.getElementById('user-body');
+            tbody.innerHTML = '';
+            const perPage = 10;
+            let page = 0;
+            function draw() {
+                tbody.innerHTML = '';
+                const start = page * perPage;
+                users.slice(start, start + perPage).forEach(u => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${u.id}</td><td>${u.username}</td><td>${u.balance.toFixed(2)}</td>`;
+                    tbody.appendChild(tr);
+                });
+                document.getElementById('page-num').textContent = page + 1;
+            }
+            document.getElementById('prev').onclick = () => { if (page>0){page--;draw();}};
+            document.getElementById('next').onclick = () => { if ((page+1)*perPage < users.length){page++;draw();}};
+            draw();
+        }
+
+        function drawChart(stats) {
+            const ctx = document.getElementById('profit-chart');
+            const labels = stats.map(s => s.day);
+            const profitData = stats.map(s => s.profit);
+            const userData = stats.map(s => s.users);
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {label: t('profit'), data: profitData, borderColor: 'blue', fill:false},
+                        {label: t('users'), data: userData, borderColor: 'green', fill:false}
+                    ]
+                }
+            });
+        }
+
+        async function loadData() {
+            const [users, stats] = await Promise.all([
+                apiRequest('/api/admin/users'),
+                apiRequest('/api/admin/stats')
+            ]);
+            renderTable(users);
+            drawChart(stats);
+            applyLang();
+        }
+        window.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</head>
+<body>
+    <h1>{{ brand }} Admin</h1>
+    <div>
+        <label for="lang">Language:</label>
+        <select id="lang" onchange="changeLang(this.value)">
+            <option value="en">English</option>
+            <option value="zh">\u4e2d\u6587</option>
+        </select>
+    </div>
+    <section>
+        <canvas id="profit-chart" width="400" height="200"></canvas>
+    </section>
+    <section>
+        <h2 id="users-title">Users</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Name</th><th>Balance</th></tr></thead>
+            <tbody id="user-body"></tbody>
+        </table>
+        <button id="prev">Prev</button>
+        <span id="page-num">1</span>
+        <button id="next">Next</button>
+    </section>
+</body>
+</html>

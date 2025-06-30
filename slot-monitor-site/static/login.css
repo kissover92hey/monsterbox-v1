@@ -1,0 +1,16 @@
+.login-container {
+    width: 320px;
+    margin: 80px auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+.login-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+.login-container button {
+    width: 100%;
+    padding: 8px;
+}
