@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+index_html_full = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,14 +9,52 @@
             const resp = await fetch('/api/logs');
             const data = await resp.json();
             const container = document.getElementById('logs');
-            container.textContent = data.join('\n');
+            container.innerHTML = data.map(item => `<li>${item}</li>`).join('');
         }
         window.addEventListener('DOMContentLoaded', loadLogs);
     </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #fefefe;
+        }
+        h1 {
+            color: #333;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        #logs {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            list-style-type: none;
+        }
+        #logs li {
+            padding: 5px 0;
+            border-bottom: 1px dashed #ddd;
+        }
+    </style>
 </head>
 <body>
     <h1>{{ brand }} Jackpot Logs</h1>
     <p><a href="/login">Login</a> | <a href="/admin">Admin</a></p>
-    <pre id="logs">Loading...</pre>
+    <ul id="logs">
+        <li>⏳ Loading jackpot logs...</li>
+    </ul>
 </body>
 </html>
+"""
+
+index_path = "/mnt/data/index.html"
+with open(index_path, "w", encoding="utf-8") as f:
+    f.write(index_html_full)
+
+index_path
