@@ -17,6 +17,20 @@ app.config['BRAND_NAME'] = Config.BRAND_NAME
 app.config['DEFAULT_LANGUAGE'] = Config.DEFAULT_LANGUAGE
 
 db.init_app(app)
+from flask import jsonify, render_template
+
+@app.route("/")
+def home():
+    return render_template("index.html", brand=app.config['BRAND_NAME'])
+
+@app.route("/api/logs")
+def get_logs():
+    logs = [
+        "🎰 UserA - Win RM8000 on DragonTiger",
+        "🎰 UserB - Win RM5000 on Fortune Panda",
+        "🎰 UserC - Win RM12000 on Golden Empire"
+    ]
+    return jsonify(logs)
 
 
 @app.context_processor
