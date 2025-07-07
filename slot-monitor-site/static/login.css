@@ -1,16 +1,16 @@
-.login-container {
-    width: 320px;
-    margin: 80px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-}
-.login-container input {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-}
-.login-container button {
-    width: 100%;
-    padding: 8px;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - MonsterBox</title>
+  <link rel="stylesheet" href="./login.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="text" placeholder="Username" />
+    <input type="password" placeholder="Password" />
+    <button onclick="alert('This is a static demo.')">Login</button>
+  </div>
+</body>
+</html>
